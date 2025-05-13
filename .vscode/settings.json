@@ -1,0 +1,25 @@
+{
+	"editor.defaultFormatter": "dbaeumer.vscode-eslint",
+	"editor.codeActionsOnSave": {
+		"source.fixAll.eslint": "always"
+	},
+	"[typescript]": {
+		"editor.defaultFormatter": "vscode.typescript-language-features"
+	},
+	"[jsonc]": {
+		"editor.defaultFormatter": "vscode.json-language-features"
+	},
+	"vitest.nodeExecArgs": [
+		"--input-type",
+		"module"
+	],
+	"eslint.execArgv": [
+		"--input-type",
+		"module"
+	],
+	"eslint.options": {
+		"overrideConfigFile": "./eslint.config.mjs"
+	},
+	"typescript.tsserver.useSyntaxServer": "auto",
+	"vitest.maximumConfigs": 50
+}

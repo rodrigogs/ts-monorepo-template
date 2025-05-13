@@ -1,0 +1,45 @@
+{
+  "name": "@repo/ai",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    ".": {
+      "require": "./dist/cjs/src/index.js",
+      "import": "./dist/esm/src/index.js"
+    }
+  },
+  "main": "./dist/cjs/src/index.js",
+  "module": "./dist/esm/src/index.js",
+  "types": "./dist/esm/src/index.d.ts",
+  "scripts": {
+    "build:esm": "npx -y rimraf dist/esm && tsc --project tsconfig.esm.json",
+    "build:cjs": "npx -y rimraf dist/cjs && tsc --project tsconfig.cjs.json",
+    "build": "npx -y concurrently \"npm run build:cjs\" \"npm run build:esm\"",
+    "build:watch": "npx -y concurrently \"tsc --project tsconfig.esm.json --watch\" \"tsc --project tsconfig.cjs.json --watch\"",
+    "clean": "npx -y rimraf dist .turbo coverage",
+    "lint": "eslint .",
+    "lint:fix": "npm run lint -- --fix",
+    "test": "npm run test:unit && npm run test:integration",
+    "test:unit": "vitest run --reporter=verbose --coverage spec.ts",
+    "test:integration": "vitest run --reporter=verbose --coverage test.ts"
+  },
+  "dependencies": {
+    "@langchain/community": "^0.3.42",
+    "@langchain/core": "^0.3.55",
+    "@langchain/langgraph": "^0.2.72",
+    "@langchain/openai": "^0.5.10",
+    "@repo/logger": "*",
+    "@repo/utils": "*",
+    "langchain": "^0.3.24",
+    "openai": "^4.98.0",
+    "zod": "^3.24.4"
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "*",
+    "@repo/test": "*",
+    "@repo/typescript-config": "*"
+  },
+  "overrides": {
+    "@langchain/core": "^0.3.55"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "name": "ts-monorepo-template",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "clear": "npx -y rimraf -g --no-preserve-root **/node_modules **/dist **/coverage **/.turbo",
+    "clean": "turbo clean",
+    "build": "turbo build",
+    "build:watch": "turbo run build:watch --parallel",
+    "dev": "turbo dev",
+    "lint": "turbo lint",
+    "lint:fix": "eslint --fix .",
+    "test": "vitest run --reporter=verbose --coverage",
+    "test:unit": "vitest run --reporter=verbose --coverage spec.ts",
+    "test:integration": "vitest run --reporter=verbose --coverage test.ts"
+  },
+  "devDependencies": {
+    "turbo": "^2.5.3"
+  },
+  "engines": {
+    "node": ">=24",
+    "npm": ">=11"
+  },
+  "packageManager": "npm@11.3.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
+}
