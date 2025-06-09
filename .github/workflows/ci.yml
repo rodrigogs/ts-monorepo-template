@@ -42,8 +42,6 @@ jobs:
 
       - name: Build
         run: npm run build
-        env:
-          NPX_CACHE: ${{ runner.temp }}/.npx-cache
 
       - name: Test (Unit)
         run: npm run test:unit
