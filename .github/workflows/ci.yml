@@ -21,7 +21,6 @@ jobs:
       DEFAULT_PROVIDER: deepseek
       DEEPSEEK_API_URL: https://api.deepseek.com
       DEFAULT_MODEL: deepseek-chat
-      NPX_CACHE: ${{ runner.temp }}/.npx-cache
 
     steps:
       - name: Checkout repository
@@ -43,6 +42,8 @@ jobs:
 
       - name: Build
         run: npm run build
+        env:
+          NPX_CACHE: ${{ runner.temp }}/.npx-cache
 
       - name: Test (Unit)
         run: npm run test:unit
