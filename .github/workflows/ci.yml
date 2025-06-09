@@ -52,12 +52,23 @@ jobs:
       - name: Test (Coverage)
         run: npm test -- --coverage
 
-      - name: Upload coverage reports
+      - name: Test (Analytics)
+        run: vitest run --reporter=junit --outputFile=test-report.junit.xml
+
+      - name: Upload coverage to Codecov
+        if: ${{ !cancelled() }}
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           directory: ./coverage
-          fail_ci_if_error: false
+          fail_ci_if_error: true
+
+      - name: Upload test results to Codecov
+        if: ${{ !cancelled() }}
+        uses: codecov/test-results-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: true
 
   security:
     name: Security Audit
