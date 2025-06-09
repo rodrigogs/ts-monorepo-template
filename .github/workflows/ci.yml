@@ -43,17 +43,8 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Test (Unit)
-        run: npm run test:unit
-
-      - name: Test (Integration)
-        run: npm run test:integration
-
-      - name: Test (Coverage)
-        run: npm test -- --coverage
-
-      - name: Test (Analytics)
-        run: npm run test:report
+      - name: Test
+        run: npm test -- --coverage --reporter=junit --outputFile=test-report.junit.xml
 
       - name: Upload coverage to Codecov
         if: ${{ !cancelled() }}

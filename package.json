@@ -12,8 +12,7 @@
     "lint:fix": "eslint --fix .",
     "test": "vitest run",
     "test:unit": "npm run test -- --project unit",
-    "test:integration": "npm run test -- --project integration",
-    "test:report": "vitest --reporter=junit --outputFile=test-report.junit.xml"
+    "test:integration": "npm run test -- --project integration"
   },
   "devDependencies": {
     "turbo": "^2.5.4"
