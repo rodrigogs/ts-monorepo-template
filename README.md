@@ -1,5 +1,8 @@
 # TypeScript Monorepo Template
 
+[![CI](https://github.com/rodrigogs/ts-monorepo-template/workflows/CI/badge.svg)](https://github.com/rodrigogs/ts-monorepo-template/actions)
+[![codecov](https://codecov.io/gh/rodrigogs/ts-monorepo-template/branch/main/graph/badge.svg)](https://codecov.io/gh/rodrigogs/ts-monorepo-template)
+
 Modern TypeScript monorepo with Turbo for high-performance builds.
 
 ## Structure
