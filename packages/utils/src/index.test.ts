@@ -10,29 +10,38 @@ describe('integration tests for utils', () => {
     const currentDirname = getDirname()
 
     describe('checkFileExists', () => {
-      it('checkFileExists should return true when file exists', async () => {
-        const result = await utils.FileUtils.checkFileExists(
-          `${currentDirname}/index.ts`,
-        )
-        expect(result).toBe(true)
-      })
-
-      it('checkFileExists should return false when file does not exist', async () => {
-        const result = await utils.FileUtils.checkFileExists('idontexist')
-        expect(result).toBe(false)
+      it.each([
+        {
+          name: 'return true when file exists',
+          filePath: `${currentDirname}/index.ts`,
+          expected: true,
+        },
+        {
+          name: 'return false when file does not exist',
+          filePath: 'idontexist',
+          expected: false,
+        },
+      ] as const)('should $name', async ({ filePath, expected }) => {
+        const result = await utils.FileUtils.checkFileExists(filePath)
+        expect(result).toBe(expected)
       })
     })
 
     describe('findNearestPackageJson', () => {
-      it('should find the nearest package.json', async () => {
-        const result = utils.FileUtils.findNearestPackageJson(currentDirname)
-        expect(result).toBe(resolve(currentDirname, '../package.json'))
-      })
-
-      it('should return null when no package.json is found', async () => {
-        const tmpDir = tmpdir()
-        const result = utils.FileUtils.findNearestPackageJson(tmpDir)
-        expect(result).toBeNull()
+      it.each([
+        {
+          name: 'find the nearest package.json',
+          inputDir: currentDirname,
+          expected: resolve(currentDirname, '../package.json'),
+        },
+        {
+          name: 'return null when no package.json is found',
+          inputDir: tmpdir(),
+          expected: null,
+        },
+      ] as const)('should $name', ({ inputDir, expected }) => {
+        const result = utils.FileUtils.findNearestPackageJson(inputDir)
+        expect(result).toBe(expected)
       })
     })
   })

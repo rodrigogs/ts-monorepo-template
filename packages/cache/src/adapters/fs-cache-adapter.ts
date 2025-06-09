@@ -8,6 +8,7 @@ import type { CacheAdapter } from '../cache-adapter.js'
 interface FileContent {
   value: unknown
   expiresAt?: number
+  isBinary?: boolean
 }
 
 export class FsCacheAdapter implements CacheAdapter {
@@ -19,9 +20,29 @@ export class FsCacheAdapter implements CacheAdapter {
 
   async set(key: string, value: unknown, ttl?: number): Promise<void> {
     const expiresAt = ttl ? Date.now() + ttl : undefined
-    const data: FileContent = { value, expiresAt }
-    await fs.mkdir(this.directory, { recursive: true })
-    await fs.writeFile(join(this.directory, key), JSON.stringify(data), 'utf-8')
+
+    // Handle Uint8Array specially
+    if (value instanceof Uint8Array) {
+      const data: FileContent = {
+        value: Array.from(value), // Convert to array for JSON serialization
+        expiresAt,
+        isBinary: true,
+      }
+      await fs.mkdir(this.directory, { recursive: true })
+      await fs.writeFile(
+        join(this.directory, key),
+        JSON.stringify(data),
+        'utf-8',
+      )
+    } else {
+      const data: FileContent = { value, expiresAt }
+      await fs.mkdir(this.directory, { recursive: true })
+      await fs.writeFile(
+        join(this.directory, key),
+        JSON.stringify(data),
+        'utf-8',
+      )
+    }
   }
 
   async get<T>(key: string): Promise<T | undefined> {
@@ -32,6 +53,12 @@ export class FsCacheAdapter implements CacheAdapter {
         await this.delete(key)
         return undefined
       }
+
+      // Convert back to Uint8Array if it was binary data
+      if (data.isBinary && Array.isArray(data.value)) {
+        return new Uint8Array(data.value) as T
+      }
+
       return data.value as T
     } catch {
       return undefined

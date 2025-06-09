@@ -82,6 +82,32 @@ describe('FsCacheAdapter', () => {
       // Restore Date.now
       vi.restoreAllMocks()
     })
+
+    it('should store and retrieve Uint8Array data correctly', async () => {
+      const adapter = new FsCacheAdapter(customDir)
+      const uint8Data = new Uint8Array([1, 2, 3, 4, 5])
+
+      await adapter.set('binary-key', uint8Data)
+
+      expect(fs.mkdir).toHaveBeenCalledWith(customDir, { recursive: true })
+      expect(fs.writeFile).toHaveBeenCalledWith(
+        join(customDir, 'binary-key'),
+        JSON.stringify({
+          value: [1, 2, 3, 4, 5],
+          isBinary: true,
+        }),
+        'utf-8',
+      )
+
+      // Mock the file read for getting the data back
+      const mockData = { value: [1, 2, 3, 4, 5], isBinary: true }
+      vi.mocked(fs.readFile).mockResolvedValue(JSON.stringify(mockData))
+
+      const result = await adapter.get<Uint8Array>('binary-key')
+
+      expect(result).toBeInstanceOf(Uint8Array)
+      expect(Array.from(result!)).toEqual([1, 2, 3, 4, 5])
+    })
   })
 
   describe('get', () => {

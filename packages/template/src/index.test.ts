@@ -7,11 +7,10 @@ describe('integration tests for index', () => {
     expect(Object.keys(index)).toHaveLength(2)
   })
 
-  it('should return bar', () => {
-    expect(index.bar()).toBe('bar')
-  })
-
-  it('should return foo', () => {
-    expect(index.foo()).toBe('foo')
+  it.each([
+    { functionName: 'bar', expected: 'bar' },
+    { functionName: 'foo', expected: 'foo' },
+  ] as const)('should return $expected', ({ functionName, expected }) => {
+    expect(index[functionName]()).toBe(expected)
   })
 })

@@ -1,14 +1,48 @@
 {
-	"editor.defaultFormatter": "dbaeumer.vscode-eslint",
+	"editor.defaultFormatter": "esbenp.prettier-vscode",
 	"editor.codeActionsOnSave": {
-		"source.fixAll.eslint": "always"
+		"source.fixAll.eslint": "explicit"
 	},
+	"editor.formatOnSave": true,
+	"editor.tabSize": 2,
+	"editor.insertSpaces": true,
 	"[typescript]": {
-		"editor.defaultFormatter": "vscode.typescript-language-features"
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"[javascript]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
 	},
 	"[jsonc]": {
-		"editor.defaultFormatter": "vscode.json-language-features"
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
 	},
+	"typescript.preferences.quoteStyle": "single",
+	"typescript.updateImportsOnFileMove.enabled": "always",
+	"typescript.suggest.autoImports": true,
+	"typescript.preferences.includePackageJsonAutoImports": "auto",
+	"typescript.tsserver.useSyntaxServer": "auto",
+	"files.associations": {
+		"*.json": "jsonc"
+	},
+	"search.exclude": {
+		"**/node_modules": true,
+		"**/dist": true,
+		"**/build": true,
+		"**/.turbo": true,
+		"**/coverage": true
+	},
+	"files.exclude": {
+		"**/.turbo": true
+	},
+	"npm.packageManager": "npm",
+	"npm.enableRunFromFolder": true,
+	"git.enableSmartCommit": true,
+	"git.confirmSync": false,
+	"git.autofetch": true,
+	"prettier.requireConfig": true,
+	"eslint.workingDirectories": [
+		"apps/*",
+		"packages/*"
+	],
 	"vitest.nodeExecArgs": [
 		"--input-type",
 		"module"
@@ -20,6 +54,5 @@
 	"eslint.options": {
 		"overrideConfigFile": "./eslint.config.mjs"
 	},
-	"typescript.tsserver.useSyntaxServer": "auto",
 	"vitest.maximumConfigs": 50
 }

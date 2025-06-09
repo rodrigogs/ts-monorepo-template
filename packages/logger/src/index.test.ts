@@ -8,6 +8,7 @@ vi.mock('@repo/utils', () => ({
   FileUtils: {
     getFilename: vi.fn(),
     findNearestPackageJson: vi.fn(),
+    findRootPackageJson: vi.fn(),
   },
 }))
 
@@ -21,14 +22,21 @@ vi.mock('fs', async () => {
 
 describe('integration tests for logger', () => {
   const mockPackageJsonPath = '/path/to/package.json'
+  const mockRootPackageJsonPath = '/path/to/root/package.json'
   const mockPackageJson = JSON.stringify({ name: '@repo/logger-test' })
+  const mockRootPackageJson = JSON.stringify({ name: 'ts-monorepo-template' })
 
   beforeEach(() => {
     vi.spyOn(FileUtils, 'getFilename').mockReturnValue('/fake/current/dir')
     vi.spyOn(FileUtils, 'findNearestPackageJson').mockReturnValue(
       mockPackageJsonPath,
     )
-    vi.spyOn(fs, 'readFileSync').mockReturnValue(mockPackageJson)
+    vi.spyOn(FileUtils, 'findRootPackageJson').mockReturnValue(
+      mockRootPackageJsonPath,
+    )
+    vi.spyOn(fs, 'readFileSync')
+      .mockReturnValueOnce(mockPackageJson)
+      .mockReturnValue(mockRootPackageJson)
   })
 
   afterEach(() => {
@@ -47,11 +55,28 @@ describe('integration tests for logger', () => {
   it('should create debug namespaces with correct format', () => {
     const logger = createLogger('mynamespace')
     logger.info('test')
-    expect(logger.info.namespace).toBe('gtr:info:logger-test:mynamespace')
+    expect(logger.info.namespace).toBe(
+      'ts-monorepo-template:info:logger-test:mynamespace',
+    )
   })
 
-  it('should throw an error when packageJson is not found', () => {
-    vi.spyOn(FileUtils, 'findNearestPackageJson').mockReturnValue(null)
-    expect(() => createLogger('no-package')).toThrow('Package path not found')
+  it.each([
+    {
+      name: 'when packageJson is not found',
+      mockSetup: () => {
+        vi.spyOn(FileUtils, 'findNearestPackageJson').mockReturnValue(null)
+      },
+      expectedError: 'Package path not found',
+    },
+    {
+      name: 'when root packageJson is not found',
+      mockSetup: () => {
+        vi.spyOn(FileUtils, 'findRootPackageJson').mockReturnValue(null)
+      },
+      expectedError: 'Root package path not found',
+    },
+  ] as const)('should throw an error $name', ({ mockSetup, expectedError }) => {
+    mockSetup()
+    expect(() => createLogger('no-package')).toThrow(expectedError)
   })
 })

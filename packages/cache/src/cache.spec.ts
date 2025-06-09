@@ -31,63 +31,58 @@ describe('Cache', () => {
     expect(cache).toBeInstanceOf(Cache)
   })
 
-  it('should call adapter.set when set is called', async () => {
+  it.each([
+    [
+      'set',
+      async (cache: Cache) => await cache.set('test-key', 'test-value', 1000),
+      'set',
+      ['test-key', 'test-value', 1000],
+    ],
+    [
+      'get',
+      async (cache: Cache) => await cache.get('test-key'),
+      'get',
+      ['test-key'],
+    ],
+    [
+      'delete',
+      async (cache: Cache) => await cache.delete('test-key'),
+      'delete',
+      ['test-key'],
+    ],
+    ['flush', async (cache: Cache) => await cache.flush(), 'flush', []],
+    [
+      'keys',
+      async (cache: Cache) => await cache.keys('test-pattern'),
+      'keys',
+      ['test-pattern'],
+    ],
+  ])(
+    'should call adapter.%s when %s is called',
+    async (methodName, cacheOperation, adapterMethod, expectedArgs) => {
+      const cache = new Cache(mockAdapter)
+      await cacheOperation(cache)
+
+      expect(
+        mockAdapter[adapterMethod as keyof typeof mockAdapter],
+      ).toHaveBeenCalledTimes(1)
+      if (expectedArgs.length > 0) {
+        expect(
+          mockAdapter[adapterMethod as keyof typeof mockAdapter],
+        ).toHaveBeenCalledWith(...expectedArgs)
+      }
+    },
+  )
+
+  it.each([
+    ['key exists', 'exists', true],
+    ['key does not exist', 'non-existent', false],
+  ])('should return %s result from has when %s', async (_, key, expected) => {
     const cache = new Cache(mockAdapter)
-    await cache.set('test-key', 'test-value', 1000)
-
-    expect(mockAdapter.set).toHaveBeenCalledTimes(1)
-    expect(mockAdapter.set).toHaveBeenCalledWith('test-key', 'test-value', 1000)
-  })
-
-  it('should call adapter.get when get is called', async () => {
-    const cache = new Cache(mockAdapter)
-    const result = await cache.get('test-key')
-
-    expect(mockAdapter.get).toHaveBeenCalledTimes(1)
-    expect(mockAdapter.get).toHaveBeenCalledWith('test-key')
-    expect(result).toEqual('test-value')
-  })
-
-  it('should call adapter.delete when delete is called', async () => {
-    const cache = new Cache(mockAdapter)
-    const result = await cache.delete('test-key')
-
-    expect(mockAdapter.delete).toHaveBeenCalledTimes(1)
-    expect(mockAdapter.delete).toHaveBeenCalledWith('test-key')
-    expect(result).toBe(true)
-  })
-
-  it('should call adapter.flush when flush is called', async () => {
-    const cache = new Cache(mockAdapter)
-    await cache.flush()
-
-    expect(mockAdapter.flush).toHaveBeenCalledTimes(1)
-  })
-
-  it('should call adapter.keys when keys is called', async () => {
-    const cache = new Cache(mockAdapter)
-    const result = await cache.keys('test-pattern')
+    const result = await cache.has(key)
 
     expect(mockAdapter.keys).toHaveBeenCalledTimes(1)
-    expect(mockAdapter.keys).toHaveBeenCalledWith('test-pattern')
-    expect(result).toEqual([])
-  })
-
-  it('should return true from has when key exists', async () => {
-    const cache = new Cache(mockAdapter)
-    const result = await cache.has('exists')
-
-    expect(mockAdapter.keys).toHaveBeenCalledTimes(1)
-    expect(mockAdapter.keys).toHaveBeenCalledWith('exists')
-    expect(result).toBe(true)
-  })
-
-  it('should return false from has when key does not exist', async () => {
-    const cache = new Cache(mockAdapter)
-    const result = await cache.has('non-existent')
-
-    expect(mockAdapter.keys).toHaveBeenCalledTimes(1)
-    expect(mockAdapter.keys).toHaveBeenCalledWith('non-existent')
-    expect(result).toBe(false)
+    expect(mockAdapter.keys).toHaveBeenCalledWith(key)
+    expect(result).toBe(expected)
   })
 })

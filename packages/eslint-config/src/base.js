@@ -79,4 +79,10 @@ export const config = [
       '@typescript-eslint/no-explicit-any': 'off',
     },
   },
+  {
+    files: ['**/vitest.config.mjs'],
+    rules: {
+      'import/no-default-export': 'off',
+    },
+  },
 ]

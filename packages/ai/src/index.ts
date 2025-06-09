@@ -1,15 +1,21 @@
-import { AIAgent } from './core/agent.js'
-import { AI } from './core/ai.js'
-import * as tools from './tools/index.js'
+import { createReactAgent, ToolNode } from '@langchain/langgraph/prebuilt'
 
-// Export all types from types.js
-export * from './core/types.js'
-// Export agent types
-export * from './core/agent.js'
+import { createModel as initModel } from './factories/model.js'
+import type { AgentOptions, ModelOptions, Providers } from './types.js'
 
-/**
- * A default AI instance you can import directly.
- */
-const ai = new AI()
+export * from './checkpointers/index.js'
 
-export { AI, ai, AIAgent, tools }
+export const createModel = <P extends Providers>(options: ModelOptions<P>) =>
+  initModel(options)
+
+export const createAgent = <P extends Providers>(options: AgentOptions<P>) => {
+  const tools = new ToolNode(options.tools ?? [])
+  const llm = options.llm ?? createModel(options)
+
+  return createReactAgent({
+    name: options.name,
+    checkpointSaver: options.checkpointSaver,
+    llm,
+    tools,
+  })
+}

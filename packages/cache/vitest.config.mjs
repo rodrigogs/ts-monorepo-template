@@ -1,7 +1,3 @@
-/* eslint-disable import/no-default-export */
-import vitestConfig from '@repo/test/vitest.config.mjs'
-import { defineConfig } from 'vitest/config'
+import { defineConfig } from '@repo/test/vitest.config.mjs'
 
-export default defineConfig({
-  ...vitestConfig,
-})
+export default defineConfig()

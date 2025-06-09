@@ -20,9 +20,9 @@
     "clean": "npx -y rimraf dist .turbo coverage",
     "lint": "eslint .",
     "lint:fix": "npm run lint -- --fix",
-    "test": "npm run test:unit && npm run test:integration",
-    "test:unit": "vitest run --reporter=verbose --coverage spec.ts",
-    "test:integration": "vitest run --reporter=verbose --coverage test.ts"
+    "test": "vitest run",
+    "test:unit": "npm run test -- --project unit",
+    "test:integration": "npm run test -- --project integration"
   },
   "devDependencies": {
     "@repo/test": "*",

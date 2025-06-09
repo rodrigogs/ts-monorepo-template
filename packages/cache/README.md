@@ -1,108 +1,118 @@
-# Cache Package
+# @repo/cache
 
-A flexible caching utility library for the GTR Services ecosystem. This package provides a consistent API for caching data across different storage backends.
+Flexible caching system with pluggable adapters. Supports memory and filesystem storage with TTL and pattern matching.
 
-## Features
+## API
 
-- **Adapter Pattern**: Pluggable storage backends with a unified interface
-- **Multiple Storage Options**: Support for memory and filesystem storage
-- **Type Safety**: Full TypeScript support with proper typing
-- **Async/Await API**: Modern promise-based interface
-- **TTL Support**: Time-to-live functionality for cached items
-
-## Project Structure
-
-- `src/`
-  - `adapters/` - Storage backend implementations
-  - `cache-adapter.ts` - Interface for cache adapters
-  - `cache.ts` - Main cache implementation
-  - `index.ts` - Package exports
-
-## Installation
-
-```sh
-# From the monorepo root
-npm install
-# Or from the package directory
-cd workspaces/typescript/packages/cache
-npm install
-```
-
-## Usage
+### Cache Class
 
 ```typescript
-import { Cache, MemoryAdapter, FileSystemAdapter } from '@repo/cache';
+import { Cache, MemoryCacheAdapter, FsCacheAdapter } from '@repo/cache'
 
-// Create a cache with memory adapter
-const memoryCache = new Cache({
-  adapter: new MemoryAdapter()
-});
+// Memory cache
+const memoryCache = new Cache(new MemoryCacheAdapter())
 
-// Create a cache with filesystem adapter
-const fileCache = new Cache({
-  adapter: new FileSystemAdapter({ directory: './cache' })
-});
+// Filesystem cache  
+const fsCache = new Cache(new FsCacheAdapter({ cacheDir: './cache' }))
 
-// Set cache item
-await cache.set('user:123', { name: 'John', role: 'admin' }, { ttl: 3600 });
+// Operations
+await cache.set('key', 'value')
+await cache.set('key', 'value', 5000) // TTL in milliseconds
+const value = await cache.get<string>('key')
+const exists = await cache.has('key')
+const deleted = await cache.delete('key')
+await cache.flush() // Clear all
 
-// Get cache item
-const user = await cache.get('user:123');
-
-// Check if item exists
-const exists = await cache.has('user:123');
-
-// Delete cache item
-await cache.delete('user:123');
-
-// Clear all cache
-await cache.clear();
+// Pattern matching  
+const keys = await cache.keys('user:*') // Glob patterns
 ```
-
-## API Reference
-
-### Cache
-
-Main class that provides caching functionality:
-
-- `constructor(options)`: Create a new cache instance
-- `get(key)`: Retrieve a cached value
-- `set(key, value, options)`: Store a value in the cache
-- `has(key)`: Check if a key exists in the cache
-- `delete(key)`: Remove a value from the cache
-- `clear()`: Clear all values from the cache
 
 ### Adapters
 
-- `MemoryAdapter`: In-memory storage (fastest, non-persistent)
-- `FileSystemAdapter`: File-based storage (persistent)
+#### MemoryCacheAdapter
+In-memory storage with automatic TTL cleanup.
 
-## Used By
+#### FsCacheAdapter
+File system storage with configurable directory.
 
-- [Bot Application](../../apps/bot/README.md) - For caching WhatsApp session data
-- [Service Orders App](../../apps/service-orders/README.md) - For caching API responses
+```typescript
+const adapter = new FsCacheAdapter({ 
+  cacheDir: './data/cache' // Default: './cache'
+})
+```
 
-## Related Packages
+## Usage Examples
 
-- [@repo/utils](../utils/README.md) - Used for file system operations in the FileSystemAdapter
+### Basic Operations
 
-## Development
+```typescript
+const cache = new Cache(new MemoryCacheAdapter())
 
-- Build the package:
-  ```sh
-  npm run build
-  ```
+// Set with TTL
+await cache.set('session:abc123', { userId: 456 }, 30 * 60 * 1000) // 30 minutes
 
-- Run tests:
-  ```sh
-  npm test
-  ```
+// Get and check
+const session = await cache.get<Session>('session:abc123')
+if (await cache.has('session:abc123')) {
+  await cache.delete('session:abc123')
+}
+```
 
-- Lint:
-  ```sh
-  npm run lint
-  ```
+### Pattern Matching
 
----
+```typescript
+await cache.set('user:123', { name: 'Alice' })
+await cache.set('user:456', { name: 'Bob' })
 
-[← Back to Monorepo Index](../../README.md)
+// Get all user keys
+const userKeys = await cache.keys('user:*')
+// Returns: ['user:123', 'user:456']
+```
+
+### Custom Cache Wrapper
+
+```typescript
+class UserCache {
+  constructor(private cache: Cache) {}
+
+  async getUser(id: string): Promise<User | null> {
+    return this.cache.get<User>(`user:${id}`)
+  }
+
+  async setUser(id: string, user: User, ttl = 3600000): Promise<void> {
+    await this.cache.set(`user:${id}`, user, ttl)
+  }
+
+  async invalidateUser(id: string): Promise<boolean> {
+    return this.cache.delete(`user:${id}`)
+  }
+}
+```
+
+## Custom Adapter Example
+
+```typescript
+import { CacheAdapter } from '@repo/cache'
+
+class RedisCacheAdapter implements CacheAdapter {
+  async set(key: string, value: unknown, ttl?: number): Promise<void> {
+    // Redis implementation
+  }
+
+  async get<T>(key: string): Promise<T | undefined> {
+    // Redis implementation  
+  }
+
+  async delete(key: string): Promise<boolean> {
+    // Redis implementation
+  }
+
+  async flush(): Promise<void> {
+    // Redis implementation
+  }
+
+  async keys(pattern: string): Promise<string[]> {
+    // Redis implementation
+  }
+}
+```

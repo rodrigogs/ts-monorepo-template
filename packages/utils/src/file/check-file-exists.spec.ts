@@ -18,27 +18,31 @@ describe('checkFileExists', () => {
     vi.resetAllMocks()
   })
 
-  it('should return true when file exists', async () => {
-    // Mock successful access
-    vi.mocked(fs.promises.access).mockResolvedValueOnce(undefined)
-
-    const result = await checkFileExists('/path/to/existing/file')
-
-    expect(fs.promises.access).toHaveBeenCalledWith('/path/to/existing/file')
-    expect(result).toBe(true)
-  })
-
-  it('should return false when file does not exist', async () => {
-    // Mock failed access
-    vi.mocked(fs.promises.access).mockRejectedValueOnce(
-      new Error('File not found'),
-    )
-
-    const result = await checkFileExists('/path/to/non-existing/file')
-
-    expect(fs.promises.access).toHaveBeenCalledWith(
+  it.each([
+    [
+      'existing file',
+      '/path/to/existing/file',
+      () => vi.mocked(fs.promises.access).mockResolvedValueOnce(undefined),
+      true,
+    ],
+    [
+      'non-existing file',
       '/path/to/non-existing/file',
-    )
-    expect(result).toBe(false)
-  })
+      () =>
+        vi
+          .mocked(fs.promises.access)
+          .mockRejectedValueOnce(new Error('File not found')),
+      false,
+    ],
+  ] as const)(
+    'should return %s when file %s',
+    async (expectedResult, filePath, setupMock, expectedValue) => {
+      setupMock()
+
+      const result = await checkFileExists(filePath)
+
+      expect(fs.promises.access).toHaveBeenCalledWith(filePath)
+      expect(result).toBe(expectedValue)
+    },
+  )
 })

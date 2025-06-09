@@ -19,20 +19,22 @@
     "clean": "npx -y rimraf dist .turbo coverage",
     "lint": "eslint .",
     "lint:fix": "npm run lint -- --fix",
-    "test": "npm run test:unit && npm run test:integration",
-    "test:unit": "vitest run --reporter=verbose --coverage spec.ts",
-    "test:integration": "vitest run --reporter=verbose --coverage test.ts"
+    "test": "vitest run",
+    "test:unit": "npm run test -- --project unit",
+    "test:integration": "npm run test -- --project integration"
   },
   "dependencies": {
-    "@langchain/community": "^0.3.42",
-    "@langchain/core": "^0.3.55",
-    "@langchain/langgraph": "^0.2.72",
-    "@langchain/openai": "^0.5.10",
+    "@langchain/community": "^0.3.45",
+    "@langchain/core": "^0.3.57",
+    "@langchain/langgraph": "^0.3.1",
+    "@langchain/langgraph-checkpoint": "^0.0.18",
+    "@langchain/openai": "^0.5.12",
+    "@repo/cache": "*",
     "@repo/logger": "*",
     "@repo/utils": "*",
-    "langchain": "^0.3.24",
-    "openai": "^4.98.0",
-    "zod": "^3.24.4"
+    "langchain": "^0.3.27",
+    "openai": "^4.62.1",
+    "zod": "^3.25.56"
   },
   "devDependencies": {
     "@repo/eslint-config": "*",
@@ -40,6 +42,6 @@
     "@repo/typescript-config": "*"
   },
   "overrides": {
-    "@langchain/core": "^0.3.55"
+    "@langchain/core": "^0.3.57"
   }
 }

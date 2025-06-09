@@ -13,22 +13,32 @@ describe('findNearestPackageJson', () => {
     vi.resetAllMocks()
   })
 
-  it('should return package.json path when found', () => {
-    const expectedPath = '/path/to/package.json'
-    vi.mocked(packageUpSync).mockReturnValueOnce(expectedPath)
+  it.each([
+    [
+      'found',
+      '/path/to/package.json',
+      (path: string) => vi.mocked(packageUpSync).mockReturnValueOnce(path),
+      '/path/to/package.json',
+    ],
+    [
+      'not found',
+      undefined,
+      () => vi.mocked(packageUpSync).mockReturnValueOnce(undefined),
+      null,
+    ],
+  ] as const)(
+    'should return %s when package.json is %s',
+    (status, mockReturn, setupMock, expectedResult) => {
+      if (mockReturn) {
+        setupMock(mockReturn)
+      } else {
+        setupMock()
+      }
 
-    const result = findNearestPackageJson('/path/to/dir')
+      const result = findNearestPackageJson('/path/to/dir')
 
-    expect(packageUpSync).toHaveBeenCalledWith({ cwd: '/path/to/dir' })
-    expect(result).toBe(expectedPath)
-  })
-
-  it('should return null when package.json is not found', () => {
-    vi.mocked(packageUpSync).mockReturnValueOnce(undefined)
-
-    const result = findNearestPackageJson('/path/to/dir')
-
-    expect(packageUpSync).toHaveBeenCalledWith({ cwd: '/path/to/dir' })
-    expect(result).toBeNull()
-  })
+      expect(packageUpSync).toHaveBeenCalledWith({ cwd: '/path/to/dir' })
+      expect(result).toBe(expectedResult)
+    },
+  )
 })
