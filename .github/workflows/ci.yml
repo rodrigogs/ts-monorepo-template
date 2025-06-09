@@ -49,8 +49,11 @@ jobs:
       - name: Test (Integration)
         run: npm run test:integration
 
+      - name: Test (Coverage)
+        run: npm test -- --coverage
+
       - name: Upload coverage reports
-        uses: codecov/codecov-action@v5.4.3
+        uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           directory: ./coverage
