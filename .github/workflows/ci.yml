@@ -21,6 +21,7 @@ jobs:
       DEFAULT_PROVIDER: deepseek
       DEEPSEEK_API_URL: https://api.deepseek.com
       DEFAULT_MODEL: deepseek-chat
+      NPX_CACHE: ${{ runner.temp }}/.npx-cache
 
     steps:
       - name: Checkout repository
