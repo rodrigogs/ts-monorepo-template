@@ -15,6 +15,13 @@ jobs:
     name: CI
     runs-on: ubuntu-latest
 
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+      DEFAULT_PROVIDER: deepseek
+      DEEPSEEK_API_URL: https://api.deepseek.com
+      DEFAULT_MODEL: deepseek-chat
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
