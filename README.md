@@ -24,7 +24,7 @@ Modern TypeScript monorepo with Turbo for high-performance builds.
 ## Stack
 
 - **Turbo** - Monorepo orchestration
-- **TypeScript** - Dual ESM/CJS builds  
+- **TypeScript** - Dual ESM/CJS builds
 - **Vitest** - Testing with coverage
 - **ESLint** - Linting with shared configs
 - **LangChain** - AI capabilities
@@ -57,13 +57,13 @@ DEEPSEEK_API_KEY=    # DeepSeek key
 
 ## Packages
 
-| Package | Description |
-|---------|-------------|
-| `@repo/ai` | AI agents with LangChain integration |
-| `@repo/cache` | Memory and filesystem caching |
-| `@repo/logger` | Structured logging with debug |
-| `@repo/utils` | File and time utilities |
-| `@repo/template` | Package creation template |
-| `@repo/eslint-config` | Shared ESLint configurations |
-| `@repo/typescript-config` | Shared TypeScript configurations |
-| `@repo/test` | Shared Vitest testing utilities |
+| Package                   | Description                          |
+| ------------------------- | ------------------------------------ |
+| `@repo/ai`                | AI agents with LangChain integration |
+| `@repo/cache`             | Memory and filesystem caching        |
+| `@repo/logger`            | Structured logging with debug        |
+| `@repo/utils`             | File and time utilities              |
+| `@repo/template`          | Package creation template            |
+| `@repo/eslint-config`     | Shared ESLint configurations         |
+| `@repo/typescript-config` | Shared TypeScript configurations     |
+| `@repo/test`              | Shared Vitest testing utilities      |
